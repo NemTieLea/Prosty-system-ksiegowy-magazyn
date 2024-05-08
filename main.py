@@ -4,23 +4,48 @@ Prosty system ksiegowy/magazyn:
 1.  saldo       - Program pobiera kwote do dodania lub odjecia z konta
 2.  sprzedaz    - Sprzedaz produktu. Produkt musi znajdowac sie w magazynie
 3.  zakup       - Zakupienie znajdujacego sie na magazynie produktu
-4.  konto       - Wyswietla stan konta
+4.#  konto       - Wyswietla stan konta
 5.  lista       - Calkowity stan magazynu z cenami i iloscia
 6.  magazyn     - Stan magazynu dla konkretnego produktu
 7.  przeglad    - Lista uzytych komend
-8.  koniec      - Aplikacja konczy dzialanie
+8.#  koniec      - Aplikacja konczy dzialanie
 """
 
 stan_konta = 0
-caly_stan_konta = 0
+caly_stan = 0
+
+cena_produktu_Rower = 980
+cena_produktu_Srubokret = 30
+cena_produktu_Opony = 60
+cena_produktu_Detki = 29
+cena_produktu_Hulajnoga = 1400
+cena_produktu_Pompka = 55
 
 slownik_produktow = {
-    "Rower": 10,
-    "Zestaw srubokretow": 13,
-    "Opony": 22,
-    "Detki": 6,
-    "Hulajnoga": 8,
-    "Hulajnoga elektryczna": 20,
+     "Rower": 10,
+     "Srubokret": 13,
+     "Opony": 22,
+     "Detki": 6,
+     "Hulajnoga": 8,
+     "Pompka": 20,
+}
+
+slownik_produktow_cala_lista = [
+     ["Rower", 10, 980],
+     ["Srubokret", 13, 30],
+     ["Opony", 22, 60],
+     ["Detki", 6, 29],
+     ["Hulajnoga", 8, 1400],
+     ["Pompka", 20, 55],
+]
+
+cena_produktow = {
+    "Rower": 980,
+    "Srubokret": 30,
+    "Opony": 60,
+    "Detki": 29,
+    "Hulajnoga": 1400,
+    "Pompka": 55,
 }
 
 LISTA_KOMEND = ['saldo', 'sprzedaz', 'zakup', 'konto', 'lista', 'magazyn', 'przeglad', 'koniec',]
@@ -31,18 +56,20 @@ while True:
     if akcja == 'koniec':
         print('Koncze dzialanie programu...')
         break
+    if akcja == 'konto':
+        print(f">>Twoj aktualny stan konta to: {caly_stan}")
     elif akcja == 'saldo':
-        stan_konta = int(input("> Podaj kwote do dodania lub odjecia na swoje saldo"))
-        if caly_stan_konta < 0:
+        stan_konta = int(input("> Podaj kwote do dodania lub odjecia na swoje saldo: "))
+        if caly_stan < 0:
             print("> Twoj calkowity stan konta nie moze byc na minusie. Podaj kwote ponownie")
             continue
         if stan_konta == 0:
             print("> Podaj kwote wieksza lub mniejsza od 0")
             continue
         if stan_konta > 0:
-            caly_stan_konta += stan_konta
+            caly_stan += stan_konta
         if stan_konta < 0:
-            caly_stan_konta -= stan_konta
+            caly_stan -= stan_konta
     elif akcja == 'zakup':
         nazwa = input("> Podaj nazwe produktu: ")
         liczba_sztuk = int(input("> Podaj liczbe produktow: "))
@@ -50,10 +77,17 @@ while True:
             print(">> Liczba zakupionych produktow musi byc wieksza od 0.")
             continue
         if nazwa in slownik_produktow and slownik_produktow[nazwa] >= liczba_sztuk:
-            print(f">> Zakupuje {liczba_sztuk} sztuk '{nazwa}'.")
-            slownik_produktow[nazwa] -= liczba_sztuk
+            if caly_stan < cena_produktow[nazwa] * liczba_sztuk:
+                print("Niewystarczajaca ilosc pieniedzy")
+                continue
+            if caly_stan == cena_produktow[nazwa] * liczba_sztuk or caly_stan >= cena_produktow[nazwa] * liczba_sztuk:
+                cena = cena_produktow[nazwa] * liczba_sztuk
+                print(f">> Zakupuje {liczba_sztuk} sztuk '{nazwa}' za '{cena} 'pieniedzy.")
+                slownik_produktow[nazwa] -= liczba_sztuk
+                caly_stan -= cena
         else:
             print(f">> Niewystarczajaca liczba sztuk produktu.")
+            continue
     elif akcja == 'sprzedaz':
         nazwa = input("Podaj nazwe produktu: ")
         liczba_sztuk = int(input("Podaj liczbe produktow: "))
