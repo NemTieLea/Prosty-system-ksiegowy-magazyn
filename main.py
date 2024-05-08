@@ -14,12 +14,7 @@ Prosty system ksiegowy/magazyn:
 stan_konta = 0
 caly_stan = 0
 
-cena_produktu_Rower = 980
-cena_produktu_Srubokret = 30
-cena_produktu_Opony = 60
-cena_produktu_Detki = 29
-cena_produktu_Hulajnoga = 1400
-cena_produktu_Pompka = 55
+historia = []
 
 slownik_produktow = {
     "Rower": 10,
@@ -65,6 +60,7 @@ while True:
             continue
         if stan_konta != 0:
             caly_stan += stan_konta
+            historia.append([akcja, stan_konta, caly_stan])
         if caly_stan < 0:
             caly_stan -= stan_konta
             print("> Twoj calkowity stan konta nie moze byc na minusie. Podaj kwote ponownie")
@@ -83,6 +79,7 @@ while True:
         else:
             print(f">> Niewystarczajaca liczba sztuk produktu.")
             continue
+        historia.append([akcja, nazwa, liczba_sztuk])
     elif akcja == 'zakup':
         nazwa = input("Podaj nazwe produktu: ")
         if nazwa in slownik_produktow:
@@ -93,6 +90,7 @@ while True:
                 print(f">> Zakupiono '{nazwa}' w liczbie {liczba_sztuk} sztuk za '{cena}' pieniedzy")
                 slownik_produktow[nazwa] += liczba_sztuk
                 caly_stan -= cena
+                historia.append([akcja, nazwa, liczba_sztuk])
                 continue
         else:
             liczba_sztuk = int(input("Podaj liczbe produktow: "))
@@ -113,6 +111,7 @@ while True:
         if caly_stan == cena_produktow[nazwa] * liczba_sztuk or caly_stan >= cena_produktow[nazwa] * liczba_sztuk:
             print(f">> Zakupiono '{nazwa}' w liczbie {liczba_sztuk} sztuk za '{cena}' pieniedzy")
             caly_stan -= cena
+        historia.append([akcja, nazwa, liczba_sztuk])
     elif akcja == 'lista':
         print("Lista dostepnych produktow:")
         for nazwa, liczba_sztuk in slownik_produktow.items():
@@ -127,3 +126,7 @@ while True:
             Cena za sztuke: {cena_produktow[nazwa_produktu]}""")
         else:
             print(f"> Niestety, produkt '{nazwa_produktu}' jest niedostepny.")
+    elif akcja == 'przeglad':
+        print(historia)
+    else:
+        print(f"Nieznana komenda: {akcja}")
