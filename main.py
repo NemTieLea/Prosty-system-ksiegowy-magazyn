@@ -87,30 +87,32 @@ while True:
         nazwa = input("Podaj nazwe produktu: ")
         if nazwa in slownik_produktow:
             cena = cena_produktow[nazwa]
-        liczba_sztuk = int(input("Podaj liczbe produktow: "))
-        if caly_stan == cena_produktow[nazwa] * liczba_sztuk or caly_stan >= cena_produktow[nazwa] * liczba_sztuk:
-            cena = cena_produktow[nazwa] * liczba_sztuk
-            print(f">> Zakupiono '{nazwa}' w liczbie {liczba_sztuk} sztuk za '{cena}' pieniedzy")
-            slownik_produktow[nazwa] += liczba_sztuk
-            caly_stan -= cena
-            continue
+            liczba_sztuk = int(input("Podaj liczbe produktow: "))
+            if caly_stan == cena_produktow[nazwa] * liczba_sztuk or caly_stan >= cena_produktow[nazwa] * liczba_sztuk:
+                cena = cena_produktow[nazwa] * liczba_sztuk
+                print(f">> Zakupiono '{nazwa}' w liczbie {liczba_sztuk} sztuk za '{cena}' pieniedzy")
+                slownik_produktow[nazwa] += liczba_sztuk
+                caly_stan -= cena
+                continue
         else:
             liczba_sztuk = int(input("Podaj liczbe produktow: "))
-            cena = int(input("Podaj cene jednego produktu"))
-        if liczba_sztuk <= 1:
+            cena = int(input("Podaj cene jednego produktu: "))
+        if liczba_sztuk <= 0:
             print(">> Liczba sztuk dodawanych produktow musi byc wieksza lub rowna 0.")
             continue
-        if caly_stan < cena_produktow[nazwa] * liczba_sztuk:
+        if caly_stan < cena * liczba_sztuk:
             print("Niewystarczajaca ilosc pieniedzy")
             continue
-        if caly_stan == cena_produktow[nazwa] * liczba_sztuk or caly_stan >= cena_produktow[nazwa] * liczba_sztuk:
-            print(f">> Zakupiono '{nazwa}' w liczbie {liczba_sztuk} sztuk za '{cena}' pieniedzy")
-            slownik_produktow[nazwa] += liczba_sztuk
-            caly_stan -= cena
         if nazwa not in slownik_produktow:
             slownik_produktow[nazwa] = 0
+            cena_produktow[nazwa] = 0
+        cena = cena * liczba_sztuk
         slownik_produktow[nazwa] += liczba_sztuk
+        cena_produktow[nazwa] += cena
         print(">> Produkt zostaje dodany do magazynu.")
+        if caly_stan == cena_produktow[nazwa] * liczba_sztuk or caly_stan >= cena_produktow[nazwa] * liczba_sztuk:
+            print(f">> Zakupiono '{nazwa}' w liczbie {liczba_sztuk} sztuk za '{cena}' pieniedzy")
+            caly_stan -= cena
     elif akcja == 'lista':
         print("Lista dostepnych produktow:")
         for nazwa, liczba_sztuk in slownik_produktow.items():
