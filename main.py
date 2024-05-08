@@ -122,6 +122,8 @@ while True:
     elif akcja == 'magazyn':
         nazwa_produktu = input('Podaj nazwe produktu do sprawdzenia: ')
         if nazwa_produktu in slownik_produktow and slownik_produktow[nazwa_produktu] > 0:
-            print(f"> Produkt '{nazwa_produktu}' jest dostepny.")
+            print(f"""> Produkt '{nazwa_produktu}' jest dostepny. 
+            ilosc: {slownik_produktow[nazwa_produktu]}
+            Cena za sztuke: {cena_produktow[nazwa_produktu]}""")
         else:
             print(f"> Niestety, produkt '{nazwa_produktu}' jest niedostepny.")
