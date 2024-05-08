@@ -60,16 +60,15 @@ while True:
         print(f">>Twoj aktualny stan konta to: {caly_stan}")
     elif akcja == 'saldo':
         stan_konta = int(input("> Podaj kwote do dodania lub odjecia na swoje saldo: "))
-        if caly_stan < 0:
-            print("> Twoj calkowity stan konta nie moze byc na minusie. Podaj kwote ponownie")
-            continue
         if stan_konta == 0:
             print("> Podaj kwote wieksza lub mniejsza od 0")
             continue
-        if stan_konta > 0:
+        if stan_konta != 0:
             caly_stan += stan_konta
-        if stan_konta < 0:
+        if caly_stan < 0:
             caly_stan -= stan_konta
+            print("> Twoj calkowity stan konta nie moze byc na minusie. Podaj kwote ponownie")
+            continue
     elif akcja == 'sprzedaz':
         nazwa = input("> Podaj nazwe produktu: ")
         liczba_sztuk = int(input("> Podaj liczbe produktow: "))
