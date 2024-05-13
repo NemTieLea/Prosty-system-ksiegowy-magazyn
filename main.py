@@ -7,7 +7,7 @@ Prosty system ksiegowy/magazyn:
 4.#  konto       - Wyswietla stan konta
 5.#  lista       - Calkowity stan magazynu z cenami i iloscia
 6.#  magazyn     - Stan magazynu dla konkretnego produktu
-7.  przeglad    - Lista uzytych komend
+7.#  przeglad    - Lista uzytych komend
 8.#  koniec      - Aplikacja konczy dzialanie
 """
 
@@ -85,6 +85,9 @@ while True:
         if nazwa in slownik_produktow:
             cena = cena_produktow[nazwa]
             liczba_sztuk = int(input("Podaj liczbe produktow: "))
+            if liczba_sztuk <= 0:
+                print(">> Liczba zakupionych produktow musi byc wieksza od 0.")
+                continue
             if caly_stan == cena_produktow[nazwa] * liczba_sztuk or caly_stan >= cena_produktow[nazwa] * liczba_sztuk:
                 cena = cena_produktow[nazwa] * liczba_sztuk
                 print(f">> Zakupiono '{nazwa}' w liczbie {liczba_sztuk} sztuk za '{cena}' pieniedzy")
@@ -94,7 +97,13 @@ while True:
                 continue
         else:
             liczba_sztuk = int(input("Podaj liczbe produktow: "))
+            if liczba_sztuk <= 0:
+                print(">> Liczba zakupionych produktow musi byc wieksza od 0.")
+                continue
             cena = int(input("Podaj cene jednego produktu: "))
+            if cena <= 0:
+                print(">> Cena musi byc wyzsza od 0")
+                continue
         if liczba_sztuk <= 0:
             print(">> Liczba sztuk dodawanych produktow musi byc wieksza lub rowna 0.")
             continue
