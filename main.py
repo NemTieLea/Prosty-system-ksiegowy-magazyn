@@ -136,6 +136,27 @@ while True:
         else:
             print(f"> Niestety, produkt '{nazwa_produktu}' jest niedostepny.")
     elif akcja == 'przeglad':
-        print(historia)
-    else:
-        print(f"Nieznana komenda: {akcja}")
+        print(f"> Calkowita ilosc wprowadzonych komend: {len(historia)}")
+        try:
+            wartosc_od = input("Wprowadz wartosc od (wcisnij enter dla calej listy): ")
+            wartosc_do = input("Wprowadz wartosc do (wcisnij enter dla calej listy): ")
+            if not wartosc_od.strip():
+                wartosc_od = 0
+            else:
+                wartosc_od = int(wartosc_od)
+            if not wartosc_do.strip():
+                wartosc_do = len(historia)
+            else:
+                wartosc_do = int(wartosc_do)
+            if wartosc_od < 0 or wartosc_od > len(historia):
+                print(f"Nieprawidlowa wartosc. Musi byc pomiedzy 0 a {len(historia)}")
+                wartosc_od = 0
+            if wartosc_do > len(historia) or wartosc_od > wartosc_do:
+                print(f"Nieprawidlowa wartosc. Musi byc pomiedzy {wartosc_od} a {len(historia)}")
+                wartosc_do = len(historia)
+            for entry in historia[wartosc_od:wartosc_do]:
+                print(entry)
+        except ValueError:
+            print("Nieprawidlowa wartosc. Prosze wpisac prawidlowa wartosc.")
+        except Exception as e:
+            print(f"Blad: {str(e)}")
