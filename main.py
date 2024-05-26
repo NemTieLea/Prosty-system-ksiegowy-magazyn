@@ -1,68 +1,64 @@
-"""
-Prosty system ksiegowy/magazyn:
+import json
+import os
 
-1.#  saldo       - Program pobiera kwote do dodania lub odjecia z konta
-2.#  sprzedaz    - Sprzedaz produktu. Produkt musi znajdowac sie w magazynie
-3.#  zakup       - Zakupienie znajdujacego sie na magazynie produktu
-4.#  konto       - Wyswietla stan konta
-5.#  lista       - Calkowity stan magazynu z cenami i iloscia
-6.#  magazyn     - Stan magazynu dla konkretnego produktu
-7.#  przeglad    - Lista uzytych komend
-8.#  koniec      - Aplikacja konczy dzialanie
-"""
+FILE_NAME = "shop_warehouse_data.txt"
 
-stan_konta = 0
-caly_stan = 0
 
-historia = []
+def load_state():
+    if not os.path.isfile(FILE_NAME):
+        return {
+            "caly_stan": 0,
+            "historia": [],
+            "slownik_produktow": {
+                "Rower": 10,
+                "Srubokret": 13,
+                "Opony": 22,
+                "Detki": 6,
+                "Hulajnoga": 8,
+                "Pompka": 20,
+            },
+            "cena_produktow": {
+                "Rower": 980,
+                "Srubokret": 30,
+                "Opony": 60,
+                "Detki": 29,
+                "Hulajnoga": 1400,
+                "Pompka": 55,
+            }
+        }
 
-slownik_produktow = {
-    "Rower": 10,
-    "Srubokret": 13,
-    "Opony": 22,
-    "Detki": 6,
-    "Hulajnoga": 8,
-    "Pompka": 20,
-}
+    with open(FILE_NAME, 'r') as file:
+        data = json.load(file)
+        return data
 
-slownik_produktow_cala_lista = [
-     ["Rower", 10, 980],
-     ["Srubokret", 13, 30],
-     ["Opony", 22, 60],
-     ["Detki", 6, 29],
-     ["Hulajnoga", 8, 1400],
-     ["Pompka", 20, 55],
-]
 
-cena_produktow = {
-    "Rower": 980,
-    "Srubokret": 30,
-    "Opony": 60,
-    "Detki": 29,
-    "Hulajnoga": 1400,
-    "Pompka": 55,
-}
+def save_state(state):
+    with open(FILE_NAME, 'w') as file:
+        json.dump(state, file)
 
-LISTA_KOMEND = ['saldo', 'sprzedaz', 'zakup', 'konto', 'lista', 'magazyn', 'przeglad', 'koniec',]
+
+state = load_state()
+
+LISTA_KOMEND = ['saldo', 'sprzedaz', 'zakup', 'konto', 'lista', 'magazyn', 'przeglad', 'koniec']
 
 while True:
     print(f"Wybierz komende z listy: {LISTA_KOMEND}")
     akcja = input("Podaj komende: ")
     if akcja == 'koniec':
         print('Koncze dzialanie programu...')
+        save_state(state)
         break
-    if akcja == 'konto':
-        print(f">>Twoj aktualny stan konta to: {caly_stan}")
+    elif akcja == 'konto':
+        print(f">>Twoj aktualny stan konta to: {state['caly_stan']}")
     elif akcja == 'saldo':
         stan_konta = int(input("> Podaj kwote do dodania lub odjecia na swoje saldo: "))
         if stan_konta == 0:
             print("> Podaj kwote wieksza lub mniejsza od 0")
             continue
-        if stan_konta != 0:
-            caly_stan += stan_konta
-            historia.append([akcja, stan_konta, caly_stan])
-        if caly_stan < 0:
-            caly_stan -= stan_konta
+        state['caly_stan'] += stan_konta
+        state['historia'].append([akcja, stan_konta, state['caly_stan']])
+        if state['caly_stan'] < 0:
+            state['caly_stan'] -= stan_konta
             print("> Twoj calkowity stan konta nie moze byc na minusie. Podaj kwote ponownie")
             continue
     elif akcja == 'sprzedaz':
@@ -71,29 +67,31 @@ while True:
         if liczba_sztuk <= 0:
             print(">> Liczba sprzedanych produktow musi byc wieksza od 0.")
             continue
-        if nazwa in slownik_produktow and slownik_produktow[nazwa] >= liczba_sztuk:
-            cena = cena_produktow[nazwa] * liczba_sztuk
+        if nazwa in state['slownik_produktow'] and state['slownik_produktow'][nazwa] >= liczba_sztuk:
+            cena = state['cena_produktow'][nazwa] * liczba_sztuk
             print(f">> Sprzedaje {liczba_sztuk} sztuk '{nazwa}' za '{cena} 'pieniedzy.")
-            slownik_produktow[nazwa] -= liczba_sztuk
-            caly_stan += cena
+            state['slownik_produktow'][nazwa] -= liczba_sztuk
+            state['caly_stan'] += cena
         else:
             print(f">> Niewystarczajaca liczba sztuk produktu.")
             continue
-        historia.append([akcja, nazwa, liczba_sztuk])
+        state['historia'].append([akcja, nazwa, liczba_sztuk])
     elif akcja == 'zakup':
         nazwa = input("Podaj nazwe produktu: ")
-        if nazwa in slownik_produktow:
-            cena = cena_produktow[nazwa]
+        if nazwa in state['slownik_produktow']:
+            cena = state['cena_produktow'][nazwa]
             liczba_sztuk = int(input("Podaj liczbe produktow: "))
             if liczba_sztuk <= 0:
                 print(">> Liczba zakupionych produktow musi byc wieksza od 0.")
                 continue
-            if caly_stan == cena_produktow[nazwa] * liczba_sztuk or caly_stan >= cena_produktow[nazwa] * liczba_sztuk:
-                cena = cena_produktow[nazwa] * liczba_sztuk
-                print(f">> Zakupiono '{nazwa}' w liczbie {liczba_sztuk} sztuk za '{cena}' pieniedzy")
-                slownik_produktow[nazwa] += liczba_sztuk
-                caly_stan -= cena
-                historia.append([akcja, nazwa, liczba_sztuk])
+            if state['caly_stan'] >= cena * liczba_sztuk:
+                koszt = cena * liczba_sztuk
+                print(f">> Zakupiono '{nazwa}' w liczbie {liczba_sztuk} sztuk za '{koszt}' pieniedzy")
+                state['slownik_produktow'][nazwa] += liczba_sztuk
+                state['caly_stan'] -= koszt
+                state['historia'].append([akcja, nazwa, liczba_sztuk])
+            else:
+                print("Niewystarczajaca ilosc pieniedzy")
                 continue
         else:
             liczba_sztuk = int(input("Podaj liczbe produktow: "))
@@ -104,39 +102,33 @@ while True:
             if cena <= 0:
                 print(">> Cena musi byc wyzsza od 0")
                 continue
-        if liczba_sztuk <= 0:
-            print(">> Liczba sztuk dodawanych produktow musi byc wieksza lub rowna 0.")
-            continue
-        if caly_stan < cena * liczba_sztuk:
-            print("Niewystarczajaca ilosc pieniedzy")
-            continue
-        if nazwa not in slownik_produktow:
-            slownik_produktow[nazwa] = 0
-            cena_produktow[nazwa] = 0
-        cena = cena * liczba_sztuk
-        slownik_produktow[nazwa] += liczba_sztuk
-        cena_produktow[nazwa] += cena
-        print(">> Produkt zostaje dodany do magazynu.")
-        if caly_stan == cena_produktow[nazwa] * liczba_sztuk or caly_stan >= cena_produktow[nazwa] * liczba_sztuk:
-            print(f">> Zakupiono '{nazwa}' w liczbie {liczba_sztuk} sztuk za '{cena}' pieniedzy")
-            caly_stan -= cena
-        historia.append([akcja, nazwa, liczba_sztuk])
+            koszt = cena * liczba_sztuk
+            if state['caly_stan'] < koszt:
+                print("Niewystarczajaca ilosc pieniedzy")
+                continue
+            if nazwa not in state['slownik_produktow']:
+                state['slownik_produktow'][nazwa] = 0
+                state['cena_produktow'][nazwa] = cena
+            state['slownik_produktow'][nazwa] += liczba_sztuk
+            state['caly_stan'] -= koszt
+            print(f">> Zakupiono '{nazwa}' w liczbie {liczba_sztuk} sztuk za '{koszt}' pieniedzy")
+            state['historia'].append([akcja, nazwa, liczba_sztuk])
     elif akcja == 'lista':
         print("Lista dostepnych produktow:")
-        for nazwa, liczba_sztuk in slownik_produktow.items():
+        for nazwa, liczba_sztuk in state['slownik_produktow'].items():
             print(f"Produkty oraz ilosc {nazwa:<35.35s} | {liczba_sztuk:>3.0f}")
-        for nazwa, liczba_sztuk in cena_produktow.items():
-            print(f"Produkty oraz ceny: {nazwa:<35.35s} | {liczba_sztuk:>3.0f}")
+        for nazwa, cena in state['cena_produktow'].items():
+            print(f"Produkty oraz ceny: {nazwa:<35.35s} | {cena:>3.0f}")
     elif akcja == 'magazyn':
         nazwa_produktu = input('Podaj nazwe produktu do sprawdzenia: ')
-        if nazwa_produktu in slownik_produktow and slownik_produktow[nazwa_produktu] > 0:
+        if nazwa_produktu in state['slownik_produktow'] and state['slownik_produktow'][nazwa_produktu] > 0:
             print(f"""> Produkt '{nazwa_produktu}' jest dostepny. 
-            ilosc: {slownik_produktow[nazwa_produktu]}
-            Cena za sztuke: {cena_produktow[nazwa_produktu]}""")
+            ilosc: {state['slownik_produktow'][nazwa_produktu]}
+            Cena za sztuke: {state['cena_produktow'][nazwa_produktu]}""")
         else:
             print(f"> Niestety, produkt '{nazwa_produktu}' jest niedostepny.")
     elif akcja == 'przeglad':
-        print(f"> Calkowita ilosc wprowadzonych komend: {len(historia)}")
+        print(f"> Calkowita ilosc wprowadzonych komend: {len(state['historia'])}")
         try:
             wartosc_od = input("Wprowadz wartosc od (wcisnij enter dla calej listy): ")
             wartosc_do = input("Wprowadz wartosc do (wcisnij enter dla calej listy): ")
@@ -145,16 +137,16 @@ while True:
             else:
                 wartosc_od = int(wartosc_od)
             if not wartosc_do.strip():
-                wartosc_do = len(historia)
+                wartosc_do = len(state['historia'])
             else:
                 wartosc_do = int(wartosc_do)
-            if wartosc_od < 0 or wartosc_od > len(historia):
-                print(f"Nieprawidlowa wartosc. Musi byc pomiedzy 0 a {len(historia)}")
+            if wartosc_od < 0 or wartosc_od > len(state['historia']):
+                print(f"Nieprawidlowa wartosc. Musi byc pomiedzy 0 a {len(state['historia'])}")
                 wartosc_od = 0
-            if wartosc_do > len(historia) or wartosc_od > wartosc_do:
-                print(f"Nieprawidlowa wartosc. Musi byc pomiedzy {wartosc_od} a {len(historia)}")
-                wartosc_do = len(historia)
-            for entry in historia[wartosc_od:wartosc_do]:
+            if wartosc_do > len(state['historia']) or wartosc_od > wartosc_do:
+                print(f"Nieprawidlowa wartosc. Musi byc pomiedzy {wartosc_od} a {len(state['historia'])}")
+                wartosc_do = len(state['historia'])
+            for entry in state['historia'][wartosc_od:wartosc_do]:
                 print(entry)
         except ValueError:
             print("Nieprawidlowa wartosc. Prosze wpisac prawidlowa wartosc.")
