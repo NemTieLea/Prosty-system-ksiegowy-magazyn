@@ -1,3 +1,16 @@
+"""
+Prosty system ksiegowy/magazyn:
+
+1.#  saldo       - Program pobiera kwote do dodania lub odjecia z konta
+2.#  sprzedaz    - Sprzedaz produktu. Produkt musi znajdowac sie w magazynie
+3.#  zakup       - Zakupienie znajdujacego sie na magazynie produktu
+4.#  konto       - Wyswietla stan konta
+5.#  lista       - Calkowity stan magazynu z cenami i iloscia
+6.#  magazyn     - Stan magazynu dla konkretnego produktu
+7.#  przeglad    - Lista uzytych komend
+8.#  koniec      - Aplikacja konczy dzialanie
+"""
+
 import json
 import os
 
