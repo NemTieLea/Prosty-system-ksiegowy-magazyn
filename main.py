@@ -14,10 +14,10 @@ if __name__ == "__main__":
         print("7. przeglad")
         print("0. koniec")
 
-        akcja = input("\nAction: ")
+        action = input("\nAction: ")
 
-        if akcja == '0':
+        if action == '0':
             print('Exiting program...')
             break
 
-        manager.execute(akcja)
+        manager.execute(action)

@@ -3,6 +3,7 @@ import os
 
 LIBRARY_FILE = "lib.json"
 
+
 def load_state():
     if not os.path.isfile(LIBRARY_FILE):
         return {
@@ -53,6 +54,7 @@ def load_state():
         }
 
     return data
+
 
 def save_state(state):
     with open(LIBRARY_FILE, 'w') as file:

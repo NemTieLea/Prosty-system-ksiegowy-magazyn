@@ -1,5 +1,5 @@
 {
-    "caly_stan": 290,
+    "caly_stan": 388,
     "historia": [
         [
             "saldo",
@@ -10,6 +10,21 @@
             "zakup",
             "glosnik",
             1
+        ],
+        [
+            "saldo",
+            50,
+            340
+        ],
+        [
+            "saldo",
+            50,
+            390
+        ],
+        [
+            "zakup",
+            "flemf",
+            1
         ]
     ],
     "slownik_produktow": {
@@ -19,7 +34,8 @@
         "Detki": 6,
         "Hulajnoga": 8,
         "Pompka": 20,
-        "glosnik": 1
+        "glosnik": 1,
+        "flemf": 1
     },
     "cena_produktow": {
         "Rower": 980,
@@ -28,6 +44,7 @@
         "Detki": 29,
         "Hulajnoga": 1400,
         "Pompka": 55,
-        "glosnik": 10
+        "glosnik": 10,
+        "flemf": 2
     }
 }

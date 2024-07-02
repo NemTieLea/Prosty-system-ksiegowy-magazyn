@@ -1,31 +1,32 @@
 from library_storage import load_state, save_state
 from actions import Actions
 
+
 class Manager:
     def __init__(self):
         self.state = load_state()
         self.actions = Actions(self)
+        self.action_map = {}
+
+        self.assign('1', 'saldo')
+        self.assign('2', 'sprzedaz')
+        self.assign('3', 'zakup')
+        self.assign('4', 'konto')
+        self.assign('5', 'lista')
+        self.assign('6', 'magazyn')
+        self.assign('7', 'przeglad')
+
+    def assign(self, command, action):
+        self.action_map[command] = getattr(self.actions, action)
 
     def execute(self, action):
-        if action == '1' or action.lower() == 'saldo':
-            self.actions.saldo()
-            self.save_state()  # Save state after modifying
-        elif action == '2' or action.lower() == 'sprzedaz':
-            self.actions.sprzedaz()
-            self.save_state()  # Save state after modifying
-        elif action == '3' or action.lower() == 'zakup':
-            self.actions.zakup()
-            self.save_state()  # Save state after modifying
-        elif action == '4' or action.lower() == 'konto':
-            self.actions.konto()
-        elif action == '5' or action.lower() == 'lista':
-            self.actions.lista()
-        elif action == '6' or action.lower() == 'magazyn':
-            self.actions.magazyn()
-        elif action == '7' or action.lower() == 'przeglad':
-            self.actions.przeglad()
+        if action in self.action_map:
+            self.action_map[action]()
+            self.save_state()
         elif action == '0' or action.lower() == 'koniec':
-            self.save_state()  # Save state before exiting
+            print('Exiting program...')
+            self.save_state()
+            exit()
         else:
             print(f"Nieznana komenda: {action}")
 
