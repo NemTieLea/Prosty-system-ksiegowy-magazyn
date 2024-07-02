@@ -1,0 +1,33 @@
+{
+    "caly_stan": 290,
+    "historia": [
+        [
+            "saldo",
+            300,
+            300
+        ],
+        [
+            "zakup",
+            "glosnik",
+            1
+        ]
+    ],
+    "slownik_produktow": {
+        "Rower": 10,
+        "Srubokret": 13,
+        "Opony": 22,
+        "Detki": 6,
+        "Hulajnoga": 8,
+        "Pompka": 20,
+        "glosnik": 1
+    },
+    "cena_produktow": {
+        "Rower": 980,
+        "Srubokret": 30,
+        "Opony": 60,
+        "Detki": 29,
+        "Hulajnoga": 1400,
+        "Pompka": 55,
+        "glosnik": 10
+    }
+}
